@@ -78,7 +78,7 @@ function viewByDepartment() {
                     message: "Which Department?",
                 },
             ])
-                .then(function (answer) {
+                .then((answer) => {
                     // console.log(answer);
                     // console.log(answer.choice);
 
@@ -112,7 +112,7 @@ function viewByRole() {
                     message: "Which Role?",
                 },
             ])
-            .then(function (answer) {
+            .then((answer) => {
                 console.log(answer);
                 console.log(answer.choice);
 
@@ -177,6 +177,36 @@ function addDepartment() {
     ]).then(answer => {
         connection.query("INSERT INTO department SET name = ?", [answer.department],
             function (err, department) {
+                if (err) throw err
+            })
+        start();
+    })
+}
+
+function addRole() {
+    inquirer.prompt([
+        {
+            name: "title",
+            type: "input",
+            message: "Please enter the role title.",
+            validate: val => /[0-9a-zA-Z-_.]/gi.test(val),
+        },
+        {
+            name: "salary",
+            type: "input",
+            message: "Please enter  role salary.",
+            validate: val => /[0-9]/gi.test(val),
+        },
+        {
+            name: "departmentId",
+            type: "input",
+            message: "Please enter  department id.",
+            validate: val => /[0-9]/gi.test(val),
+        }
+
+    ]).then(answer => {
+        connection.query("INSERT INTO role SET title = ?, salary = ?, department_id = ?", [answer.title, answer.salary, answer.department_id],
+            function (err,) {
                 if (err) throw err
             })
         start();
