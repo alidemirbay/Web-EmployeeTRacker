@@ -18,12 +18,19 @@ connection.connect(function (err) {
 });
 
 function start() {
-
     inquirer.prompt({
         type: "list",
         name: "action",
         message: "What would you like to do?",
-        choices: ["View All Employees", "View Employees by Department", "View Employees by Role", "Quit",]
+        choices: [
+            "View All Employees",
+            "View Employees by Department",
+            "View Employees by Role",
+            "Add Employee",
+            "Add Department",
+            "Add Role",
+            "Quit",
+        ]
     }).then(function (answer) {
         switch (answer.action) {
             case "View All Employees": viewAllEmployees();
@@ -31,6 +38,12 @@ function start() {
             case "View Employees by Department": viewByDepartment();
                 break;
             case "View Employees by Role": viewByRole();
+                break;
+            case "Add Employee": addEmployee();
+                break;
+            case "Add Department": addDepartment();
+                break;
+            case "Add Role": addRole();
                 break;
             case "Quit": connection.end();
                 break;
@@ -112,4 +125,44 @@ function viewByRole() {
                 );
             });
     });
+}
+
+function addEmployee() {
+    inquirer.prompt([
+        {
+            name: "firstName",
+            type: "input",
+            message: "What is the employee's first name?",
+            validate: val => /[0-9a-zA-Z-_.]/gi.test(val),
+        },
+        {
+            name: "lastName",
+            type: "input",
+            message: "What is the employee's last name?",
+            validate: val => /[0-9a-zA-Z-_.]/gi.test(val),
+        },
+        {
+            name: "roleId",
+            type: "input",
+            message: "Please enter the role id",
+            validate: val => /[0-9]/gi.test(val),
+
+
+        },
+        {
+            name: "managerId",
+            type: "input",
+            message: "Please enter manager id",
+            validate: val => /[0-9]/gi.test(val),
+        }
+    ]).then(answers => {
+
+        connection.query(
+            "INSERT INTO employee SET first_name = ?, last_name = ?, role_id = ?, manager_id = ?",
+            [answers.firstName, answers.lastName, answers.roleId, answers.managerId],
+            function (error, add) {
+                if (error) throw error
+            })
+        start();
+    })
 }
