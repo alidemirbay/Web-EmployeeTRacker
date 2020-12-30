@@ -146,8 +146,6 @@ function addEmployee() {
             type: "input",
             message: "Please enter the role id",
             validate: val => /[0-9]/gi.test(val),
-
-
         },
         {
             name: "managerId",
@@ -155,13 +153,31 @@ function addEmployee() {
             message: "Please enter manager id",
             validate: val => /[0-9]/gi.test(val),
         }
-    ]).then(answers => {
+    ]).then(answer => {
 
         connection.query(
             "INSERT INTO employee SET first_name = ?, last_name = ?, role_id = ?, manager_id = ?",
-            [answers.firstName, answers.lastName, answers.roleId, answers.managerId],
-            function (error, add) {
-                if (error) throw error
+            [answer.firstName, answer.lastName, answer.roleId, answer.managerId],
+            function (err, add) {
+                if (err) throw err
+            })
+        start();
+    })
+}
+
+function addDepartment() {
+    inquirer.prompt([
+        {
+            name: "department",
+            type: "input",
+            message: "Please enter  name of the department.",
+            validate: val => /[0-9a-zA-Z-_.]/gi.test(val),
+        },
+
+    ]).then(answer => {
+        connection.query("INSERT INTO department SET name = ?", [answer.department],
+            function (err, department) {
+                if (err) throw err
             })
         start();
     })
