@@ -40,7 +40,7 @@ function start() {
 
 
 function viewAllEmployees() {
-    connection.query("SELECT employee.id,first_name, last_name, role.salary, role.title, department.name as department_name  FROM employee   INNER JOIN role ON employee.role_id = role.id    INNER JOIN department ON role.department_id = department.id",
+    connection.query("SELECT employee.id, first_name, last_name, role.salary, role.title, department.name as department  FROM employee   INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id",
 
         function (err, res) {
             if (err) throw err;
@@ -79,4 +79,37 @@ function viewByDepartment() {
                 });
         }
     );
+}
+
+function viewByRole() {
+    connection.query("SELECT title FROM role", function (err, res) {
+        if (err) throw err;
+
+        inquirer
+            .prompt([
+                {
+                    name: "choice", type: "list",
+                    choices: function () {
+                        var choiceArr = [];
+                        for (var i = 0; i < res.length; i++) {
+                            choiceArr.push(res[i].title);
+                        }
+                        return choiceArr;
+                    },
+                    message: "Which Role?",
+                },
+            ])
+            .then(function (answer) {
+                console.log(answer);
+                console.log(answer.choice);
+
+                connection.query("SELECT first_name, last_name, role.salary, role.title, department.name as department FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id WHERE role.title=?", answer.choice,
+                    function (err, res) {
+                        if (err) throw err;
+                        console.table(res);
+                        start();
+                    }
+                );
+            });
+    });
 }
