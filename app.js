@@ -32,6 +32,12 @@ function start() {
             "Add Department",
             "Add Role",
             "Update Employee Role",
+
+            "Update Employee Manager",
+            "View Employees by Manager",
+            "Delete Department",
+            "Delete Role",
+            "Delete Employee",
             "Quit",
         ]
     }).then(function (answer) {
@@ -54,6 +60,23 @@ function start() {
                 break;
             case "Update Employee Role": updateEmpRole();
                 break;
+
+
+            case "Update Employee Manager": updateEmpManager();
+                break;
+            case "View Employees by Manager": viewByManager();
+                break;
+            case "Delete Department": deleteDepartment();
+                break;
+            case "Delete Role": deleteRole();
+                break;
+            case "Delete Employee": deleteEmployee();
+                break;
+
+
+
+
+
             case "Quit": connection.end();
                 break;
         }
@@ -255,11 +278,36 @@ function updateEmpRole() {
 
     ]).then(answer => {
         connection.query("UPDATE employee SET role_id = ? WHERE id = ?",
-            [answer.roleId, answeremployeeId],
+            [answer.roleId, answer.employeeId],
             function (err, res) {
                 if (err) throw err
+            })
+        start();
+    })
+}
+
+function updateEmpManager() {
+    inquirer.prompt([
+        {
+            name: "managerId",
+            type: "input",
+            message: "Please enter manager id",
+        },
+        {
+            name: "employeeId",
+            type: "input",
+            message: "Please enter employee id",
+
+        }
+    ]).then(answer => {
+        connection.query(
+            "UPDATE employee SET manager_id = ? WHERE id = ?",
+            [answer.managerId, answer.employeeId],
+            function (err, res) {
+                if (err) throw err;
 
             })
         start();
+
     })
 }
