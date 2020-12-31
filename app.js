@@ -31,6 +31,7 @@ function start() {
             "Add Employee",
             "Add Department",
             "Add Role",
+            "Update Employee Role",
             "Quit",
         ]
     }).then(function (answer) {
@@ -50,6 +51,8 @@ function start() {
             case "Add Department": addDepartment();
                 break;
             case "Add Role": addRole();
+                break;
+            case "Update Employee Role": updateEmpRole();
                 break;
             case "Quit": connection.end();
                 break;
@@ -97,7 +100,9 @@ function viewByDepartment() {
                     type: "list",
                     choices: function () {
                         var choiceArr = [];
-                        for (var i = 0; i < res.length; i++) { choiceArr.push(res[i].name); }
+                        for (var i = 0; i < res.length; i++) {
+                            choiceArr.push(res[i].name);
+                        }
                         return choiceArr;
                     },
                     message: "Which Department?",
@@ -121,32 +126,29 @@ function viewByRole() {
     connection.query("SELECT title FROM role", function (err, res) {
         if (err) throw err;
 
-        inquirer
-            .prompt([
-                {
-                    name: "choice", type: "list",
-                    choices: function () {
-                        var choiceArr = [];
-                        for (var i = 0; i < res.length; i++) {
-                            choiceArr.push(res[i].title);
-                        }
-                        return choiceArr;
-                    },
-                    message: "Which Role?",
-                },
-            ])
-            .then((answer) => {
-                console.log(answer);
-                console.log(answer.choice);
-
-                connection.query("SELECT first_name, last_name, role.salary, role.title, department.name as department FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id WHERE role.title=?", answer.choice,
-                    function (err, res) {
-                        if (err) throw err;
-                        console.table(res);
-                        start();
+        inquirer.prompt([
+            {
+                name: "choice",
+                type: "list",
+                choices: function () {
+                    var choiceArr = [];
+                    for (var i = 0; i < res.length; i++) {
+                        choiceArr.push(res[i].title);
                     }
-                );
-            });
+                    return choiceArr;
+                },
+                message: "Which Role?",
+            },
+        ]).then((answer) => {
+
+            connection.query("SELECT first_name, last_name, role.salary, role.title, department.name as department FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id WHERE role.title=?", answer.choice,
+                function (err, res) {
+                    if (err) throw err;
+                    console.table(res);
+                    start();
+                }
+            );
+        });
     });
 }
 
@@ -181,7 +183,7 @@ function addEmployee() {
         connection.query(
             "INSERT INTO employee SET first_name = ?, last_name = ?, role_id = ?, manager_id = ?",
             [answer.firstName, answer.lastName, answer.roleId, answer.managerId],
-            function (err, add) {
+            function (err, res) {
                 if (err) throw err
             })
         start();
@@ -193,14 +195,15 @@ function addDepartment() {
         {
             name: "department",
             type: "input",
-            message: "Please enter  name of the department.",
+            message: "Please enter department name.",
             validate: val => /[0-9a-zA-Z-_.]/gi.test(val),
         },
 
     ]).then(answer => {
         connection.query("INSERT INTO department SET name = ?", [answer.department],
-            function (err, department) {
+            function (err, res) {
                 if (err) throw err
+
             })
         start();
     })
@@ -223,14 +226,39 @@ function addRole() {
         {
             name: "departmentId",
             type: "input",
-            message: "Please enter  department id.",
+            message: "Please enter department id.",
             validate: val => /[0-9]/gi.test(val),
         }
 
     ]).then(answer => {
-        connection.query("INSERT INTO role SET title = ?, salary = ?, department_id = ?", [answer.title, answer.salary, answer.department_id],
-            function (err) {
+        connection.query("INSERT INTO role SET title = ?, salary = ?, department_id = ?",
+            [answer.title, answer.salary, answer.department_id],
+            function (err, res) {
                 if (err) throw err
+            })
+        start();
+    })
+}
+
+function updateEmpRole() {
+    inquirer.prompt([
+        {
+            name: "employeeId",
+            type: "input",
+            message: "Please enter employee id",
+        },
+        {
+            name: "roleId",
+            type: "input",
+            message: "Please enter role id",
+        }
+
+    ]).then(answer => {
+        connection.query("UPDATE employee SET role_id = ? WHERE id = ?",
+            [answer.roleId, answeremployeeId],
+            function (err, res) {
+                if (err) throw err
+
             })
         start();
     })
