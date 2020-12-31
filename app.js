@@ -311,3 +311,13 @@ function updateEmpManager() {
 
     })
 }
+
+function viewByManager() {
+    connection.query("SELECT employee.id, employee.first_name, employee.last_name, department.name, employee.manager_id ,CONCAT(manager.first_name, ' ', manager.last_name) AS manager, role.title FROM employee LEFT JOIN role on role.id = employee.role_id LEFT JOIN department ON department.id = role.department_id LEFT JOIN employee manager on manager.id = employee.manager_id",
+
+        function (err, res) {
+            if (err) throw err;
+            console.table(res);
+        })
+    start();
+}
