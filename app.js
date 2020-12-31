@@ -353,3 +353,19 @@ function deleteRole() {
         start();
     })
 }
+
+function deleteEmployee() {
+    inquirer.prompt([
+        {
+            name: "id",
+            type: "input",
+            message: "ENTER EMPLOYEE ID",
+        }
+    ]).then(answer => {
+        connection.query("DELETE FROM employee WHERE id = ?", [answer.id],
+            function (err, res) {
+                if (err) throw err
+            })
+        start();
+    })
+}
