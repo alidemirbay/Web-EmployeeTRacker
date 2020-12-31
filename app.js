@@ -321,3 +321,20 @@ function viewByManager() {
         })
     start();
 }
+
+function deleteDepartment() {
+    inquirer.prompt([
+        {
+            name: "id",
+            type: "input",
+            message: "ENTER DEPARTMENT ID",
+        }
+    ]).then(answer => {
+        connection.query("DELETE FROM department WHERE id = ?", [answer.id],
+            function (err, res) {
+                if (err) throw err
+            })
+        start();
+    })
+}
+
