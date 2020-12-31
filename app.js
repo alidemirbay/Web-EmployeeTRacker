@@ -24,6 +24,8 @@ function start() {
         message: "What would you like to do?",
         choices: [
             "View All Employees",
+            "View Departments",
+            "View Roles",
             "View Employees by Department",
             "View Employees by Role",
             "Add Employee",
@@ -34,6 +36,10 @@ function start() {
     }).then(function (answer) {
         switch (answer.action) {
             case "View All Employees": viewAllEmployees();
+                break;
+            case "View Departments": viewDepartments();
+                break;
+            case "View Roles": viewRoles();
                 break;
             case "View Employees by Department": viewByDepartment();
                 break;
@@ -53,13 +59,31 @@ function start() {
 
 
 function viewAllEmployees() {
-    connection.query("SELECT employee.id, first_name, last_name, role.salary, role.title, department.name as department  FROM employee   INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id",
+    connection.query("SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;",
 
         function (err, res) {
             if (err) throw err;
             console.table(res);
             start();
         });
+}
+
+function viewDepartments() {
+    connection.query("SELECT id ,name  FROM department;",
+        function (err, res) {
+            if (err) throw err
+            console.table(res);
+            start();
+        })
+}
+
+function viewRoles() {
+    connection.query("SELECT id,title, salary, department_id FROM role;",
+        function (err, res) {
+            if (err) throw err
+            console.table(res);
+            start();
+        })
 }
 
 function viewByDepartment() {
@@ -69,7 +93,8 @@ function viewByDepartment() {
 
             inquirer.prompt([
                 {
-                    name: "choice", type: "list",
+                    name: "choice",
+                    type: "list",
                     choices: function () {
                         var choiceArr = [];
                         for (var i = 0; i < res.length; i++) { choiceArr.push(res[i].name); }
@@ -79,8 +104,6 @@ function viewByDepartment() {
                 },
             ])
                 .then((answer) => {
-                    // console.log(answer);
-                    // console.log(answer.choice);
 
                     connection.query("SELECT first_name, last_name, role.salary, role.title, department.name as department FROM employee INNER JOIN role ON employee.role_id = role.id   INNER JOIN department ON role.department_id = department.id WHERE department.name = ? ", answer.choice,
 
@@ -206,7 +229,7 @@ function addRole() {
 
     ]).then(answer => {
         connection.query("INSERT INTO role SET title = ?, salary = ?, department_id = ?", [answer.title, answer.salary, answer.department_id],
-            function (err,) {
+            function (err) {
                 if (err) throw err
             })
         start();
