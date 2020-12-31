@@ -21,63 +21,55 @@ function start() {
     inquirer.prompt({
         type: "list",
         name: "action",
-        message: "What would you like to do?",
+        message: "WHAT WOULD YOU LIKE TO MANAGE?",
         choices: [
-            "View All Employees",
-            "View Departments",
-            "View Roles",
-            "View Employees by Department",
-            "View Employees by Role",
-            "Add Employee",
-            "Add Department",
-            "Add Role",
-            "Update Employee Role",
-
-            "Update Employee Manager",
-            "View Employees by Manager",
-            "Delete Department",
-            "Delete Role",
-            "Delete Employee",
-            "Quit",
+            "VIEW ALL EMPLOYEES",
+            "VIEW DEPARTMENTS",
+            "VIEW ROLES",
+            "VIEW EMPLOYEES BY DEPARTMENT",
+            "VIEW EMPLOYEES BY ROLE",
+            "VIEW EMPLOYEES BY MANAGER",
+            "ADD EMPLOYEE",
+            "ADD DEPARTMENT",
+            "ADD ROLE",
+            "UPDATE EMPLOYEE ROLE",
+            "UPDATE EMPLOYEE MANAGER",
+            "DELETE DEPARTMENT",
+            "DELETE ROLE",
+            "DELETE EMPLOYEE",
+            "QUIT",
         ]
     }).then(function (answer) {
         switch (answer.action) {
-            case "View All Employees": viewAllEmployees();
+            case "VIEW ALL EMPLOYEES": viewAllEmployees();
                 break;
-            case "View Departments": viewDepartments();
+            case "VIEW DEPARTMENTS": viewDepartments();
                 break;
-            case "View Roles": viewRoles();
+            case "VIEW ROLES": viewRoles();
                 break;
-            case "View Employees by Department": viewByDepartment();
+            case "VIEW EMPLOYEES BY DEPARTMENT": viewByDepartment();
                 break;
-            case "View Employees by Role": viewByRole();
+            case "VIEW EMPLOYEES BY ROLE": viewByRole();
                 break;
-            case "Add Employee": addEmployee();
+            case "VIEW EMPLOYEES BY MANAGER": viewByManager();
                 break;
-            case "Add Department": addDepartment();
+            case "ADD EMPLOYEE": addEmployee();
                 break;
-            case "Add Role": addRole();
+            case "ADD DEPARTMENT": addDepartment();
                 break;
-            case "Update Employee Role": updateEmpRole();
+            case "ADD ROLE": addRole();
                 break;
-
-
-            case "Update Employee Manager": updateEmpManager();
+            case "UPDATE EMPLOYEE ROLE": updateEmpRole();
                 break;
-            case "View Employees by Manager": viewByManager();
+            case "UPDATE EMPLOYEE MANAGER": updateEmpManager();
                 break;
-            case "Delete Department": deleteDepartment();
+            case "DELETE DEPARTMENT": deleteDepartment();
                 break;
-            case "Delete Role": deleteRole();
+            case "DELETE ROLE": deleteRole();
                 break;
-            case "Delete Employee": deleteEmployee();
+            case "DELETE EMPLOYEE": deleteEmployee();
                 break;
-
-
-
-
-
-            case "Quit": connection.end();
+            case "QUIT": connection.end();
                 break;
         }
     });
@@ -128,7 +120,7 @@ function viewByDepartment() {
                         }
                         return choiceArr;
                     },
-                    message: "Which Department?",
+                    message: "CHOOSE DEPARTMENT",
                 },
             ])
                 .then((answer) => {
@@ -160,7 +152,7 @@ function viewByRole() {
                     }
                     return choiceArr;
                 },
-                message: "Which Role?",
+                message: "CHOOSE ROLE",
             },
         ]).then((answer) => {
 
@@ -175,30 +167,40 @@ function viewByRole() {
     });
 }
 
+function viewByManager() {
+    connection.query("SELECT employee.id, employee.first_name, employee.last_name, department.name, employee.manager_id ,CONCAT(manager.first_name, ' ', manager.last_name) AS manager, role.title FROM employee LEFT JOIN role on role.id = employee.role_id LEFT JOIN department ON department.id = role.department_id LEFT JOIN employee manager on manager.id = employee.manager_id",
+
+        function (err, res) {
+            if (err) throw err;
+            console.table(res);
+        })
+    start();
+}
+
 function addEmployee() {
     inquirer.prompt([
         {
             name: "firstName",
             type: "input",
-            message: "What is the employee's first name?",
+            message: "ENTER EMPLOYEE FIRST NAME?",
             validate: val => /[0-9a-zA-Z-_.]/gi.test(val),
         },
         {
             name: "lastName",
             type: "input",
-            message: "What is the employee's last name?",
+            message: "ENTER EMPLOYEE LAST NAME?",
             validate: val => /[0-9a-zA-Z-_.]/gi.test(val),
         },
         {
             name: "roleId",
             type: "input",
-            message: "Please enter the role id",
+            message: "ENTER THE ROLE ID",
             validate: val => /[0-9]/gi.test(val),
         },
         {
             name: "managerId",
             type: "input",
-            message: "Please enter manager id",
+            message: "ENTER MANAGER ID",
             validate: val => /[0-9]/gi.test(val),
         }
     ]).then(answer => {
@@ -218,7 +220,7 @@ function addDepartment() {
         {
             name: "department",
             type: "input",
-            message: "Please enter department name.",
+            message: "ENTER DEPARTMENT NAME",
             validate: val => /[0-9a-zA-Z-_.]/gi.test(val),
         },
 
@@ -237,19 +239,19 @@ function addRole() {
         {
             name: "title",
             type: "input",
-            message: "Please enter the role title.",
+            message: "ENTER ROLE TITLE",
             validate: val => /[0-9a-zA-Z-_.]/gi.test(val),
         },
         {
             name: "salary",
             type: "input",
-            message: "Please enter  role salary.",
+            message: "ENTER ROLE SALARY",
             validate: val => /[0-9]/gi.test(val),
         },
         {
             name: "departmentId",
             type: "input",
-            message: "Please enter department id.",
+            message: "ENTER DEPARTMENT ID",
             validate: val => /[0-9]/gi.test(val),
         }
 
@@ -268,12 +270,12 @@ function updateEmpRole() {
         {
             name: "employeeId",
             type: "input",
-            message: "Please enter employee id",
+            message: "ENTER EMPLOYEE ID",
         },
         {
             name: "roleId",
             type: "input",
-            message: "Please enter role id",
+            message: "ENTER ROLE ID",
         }
 
     ]).then(answer => {
@@ -291,13 +293,12 @@ function updateEmpManager() {
         {
             name: "managerId",
             type: "input",
-            message: "Please enter manager id",
+            message: "ENTER MANAGER ID",
         },
         {
             name: "employeeId",
             type: "input",
-            message: "Please enter employee id",
-
+            message: "ENTER EMPLOYEE ID",
         }
     ]).then(answer => {
         connection.query(
@@ -305,21 +306,9 @@ function updateEmpManager() {
             [answer.managerId, answer.employeeId],
             function (err, res) {
                 if (err) throw err;
-
             })
         start();
-
     })
-}
-
-function viewByManager() {
-    connection.query("SELECT employee.id, employee.first_name, employee.last_name, department.name, employee.manager_id ,CONCAT(manager.first_name, ' ', manager.last_name) AS manager, role.title FROM employee LEFT JOIN role on role.id = employee.role_id LEFT JOIN department ON department.id = role.department_id LEFT JOIN employee manager on manager.id = employee.manager_id",
-
-        function (err, res) {
-            if (err) throw err;
-            console.table(res);
-        })
-    start();
 }
 
 function deleteDepartment() {
