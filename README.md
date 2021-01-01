@@ -11,7 +11,7 @@ You can also update and remove items from database
 <br /> 
 <br /> 
 
-You can find the video of the app that shows functionality [here](./images/team-generator.webm) 
+You can find the video of the app that shows functionality [here](./emptrack.webm) 
 
 ![screenshot1 ](1.png)
 <br /> 
@@ -46,9 +46,6 @@ dependencies: mysql, inquirer, console.table
 
 ## License
 This project is license under the MIT license.
-
-## Contributing
-​Contributors: Ali Demir
 
 
 
