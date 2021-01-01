@@ -11,7 +11,7 @@ You can also update and remove items from database
 <br /> 
 <br /> 
 
-You can find the video of the app that shows functionality [here](./emptrack.webm) 
+You can find the video of the app that shows functionality [here](https://drive.google.com/file/d/1BOJOGeWmyhu_ZH2kD7xaJ5Yw-QkQ6Shg/view?usp=sharing) 
 
 ![screenshot1 ](1.png)
 <br /> 
